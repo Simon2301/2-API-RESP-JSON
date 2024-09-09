@@ -1,5 +1,19 @@
 {
-    "id": 1,
-    "nombre": "lapices",
-    "precio": 100
+    "productos": [
+        {
+            "id": 1,
+            "nombre": "regla",
+            "precio": 100
+        },
+        {
+            "id": 2,
+            "nombre": "lapiz",
+            "precio": 180
+        },
+        {
+            "id": 3,
+            "nombre": "cuaderno",
+            "precio": 650
+        }
+    ]
 }

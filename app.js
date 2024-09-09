@@ -22,7 +22,7 @@ const leerDatos = () => {
 //leerDatos()
 const escribirDatos = (datos) => {
     try {
-        fs.writeFile('./data/datos.json', JSON.stringify(datos)) //writeFile permite escribir datos || JSON.stringify convierte un objeto JS en JSON
+        fs.writeFileSync('./data/datos.json', JSON.stringify(datos)) //writeFile permite escribir datos || JSON.stringify convierte un objeto JS en JSON
 
     } catch (error) {
         console.log(error)
@@ -35,12 +35,34 @@ app.listen(port, () => {
 });
 
 app.get('/productos', (req, res) => {
-    res.send('Listado de productos')
+   // res.send('Listado de productos')
+   const datos= leerDatos();
+   res.json(datos.productos);
+})
+
+app.get('/productos/:id', (req, res) => {
+    //res.send('Buscar producto por ID')
+    const datos = leerDatos();
+    const prodEncontrado= datos.productos.find ((p) => p.id == req.params.id)
+    if (!prodEncontrado) { // ! (no) o diferente
+        return res.status(404).json(`No se encuentra el producto`)
+    }
+    res.json({
+        mensaje: "producto encontrado",
+        producto: prodEncontrado
+    })
 })
 
 app.post('/productos', (req, res) => {
-    res.send('Guardando nuevo producto')
-})
+    //res.send('Guardando nuevo producto')
+    const datos= leerDatos();
+    nuevoProducto = { id: datos.productos.length + 1, ...req.body }     //Genera un ID y agrega una copia de req.body
+    datos.productos.push(nuevoProducto)
+    escribirDatos(datos);
+    res.json({"mensaje":'Nuevo producto agregado',
+            producto: nuevoProducto});
+    })
+
 
 app.put('/productos/:id', (req, res) => {
     res.send('Actualizar producto por id')
@@ -50,6 +72,3 @@ app.delete('/productos/:id', (req, res) => {
     res.send('Eliminando Producto')
 })
 
-app.get('/productos/:id', (req, res) => {
-    res.send('Buscar producto por ID')
-})
