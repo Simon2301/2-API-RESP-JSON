@@ -66,9 +66,33 @@ app.post('/productos', (req, res) => {
 
 app.put('/productos/:id', (req, res) => {
     res.send('Actualizar producto por id')
+    const id= req.params.id;
+    const nuevosDatos= req.body;
+    const datos = leerDatos()
+    const prodEncontrado=datos.productos.find((p)=>p.id ==req.params.id)
+    if (!prodEncontrado) {
+        return res.status(404).json({"Mensaje":"No se encontró el producto"})
+    }
+    datos.productos = datos.productos.map(p => p.id == req.params.id ? { ...p, ...nuevosDatos } : p)
+    escribirDatos(datos)
+    res.json({"Mensaje":"Producto Actualizado"})
 })
 
 app.delete('/productos/:id', (req, res) => {
     res.send('Eliminando Producto')
+    const id=req.params.id;
+    const datos= leerDatos()
+    const prodEncontrado = datos.productos.find((p) => p.id == req.params.id)
+    if (!prodEncontrado) {
+        return res.status(404).json(`No se encuentra el producto`)
+    }
+    datos.productos= datos.productos.filter((p)=>p.id != req.params.id)
+    let indice=1
+    datos.productos.map((p)=>{
+        p.id=indice
+        indice++
+    })
+    escribirDatos(datos)
+    res.json({"Mensaje":"Producto Eliminado"})
 })
 
